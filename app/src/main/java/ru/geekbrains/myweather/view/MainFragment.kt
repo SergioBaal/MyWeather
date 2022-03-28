@@ -8,20 +8,27 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import ru.geekbrains.myweather.R
+import ru.geekbrains.myweather.databinding.FragmentMainBinding
 import ru.geekbrains.myweather.viewmodel.MainViewModel
 
 
 class MainFragment : Fragment() {
 
+    private var _binding: FragmentMainBinding? = null // утечка памяти//UPD: Разобрался. Но есть еще одно решение с перемещением области видимости из фрагмента в область функции.
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_main, container, false)
+    ): View /*? теперь вью точно не ноль */ {
+        _binding = FragmentMainBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
