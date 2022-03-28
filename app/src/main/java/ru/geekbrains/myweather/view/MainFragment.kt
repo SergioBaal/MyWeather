@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.snackbar.Snackbar
 import ru.geekbrains.myweather.databinding.FragmentMainBinding
 import ru.geekbrains.myweather.viewmodel.AppState
 import ru.geekbrains.myweather.viewmodel.MainViewModel
@@ -15,9 +16,11 @@ import ru.geekbrains.myweather.viewmodel.MainViewModel
 
 class MainFragment : Fragment() {
 
+
     private var _binding: FragmentMainBinding? =
         null // утечка памяти//UPD: Разобрался.
-            // Но есть еще одно решение с перемещением области видимости из фрагмента в область функции.
+
+    // Но есть еще одно решение с перемещением области видимости из фрагмента в область функции.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -49,6 +52,12 @@ class MainFragment : Fragment() {
         when (data) {
             is AppState.Error -> {
                 binding.loadingLayout.visibility = View.GONE
+                Snackbar.make(binding.mainView, "Ошибка ${data.error}", Snackbar.LENGTH_LONG)
+                    .setAction("Повторить",
+                        View.OnClickListener {
+                            val viewModel = ViewModelProvider(this).get(MainViewModel::class.java) //костыль
+                            viewModel.getWeather()
+                        }).show()
             }
             is AppState.Loading -> {
                 binding.loadingLayout.visibility = View.VISIBLE
@@ -56,6 +65,11 @@ class MainFragment : Fragment() {
             }
             is AppState.Success -> {
                 binding.loadingLayout.visibility = View.GONE
+                binding.cityName.text = data.weatherData.city.name
+                binding.cityCoordinates.text =
+                    "${data.weatherData.city.lat} ${data.weatherData.city.lon}"
+                binding.temperatureValue.text = data.weatherData.temperature.toString()
+                binding.feelsLikeValue.text = data.weatherData.feelsLike.toString()
                 Toast.makeText(requireContext(), "Работает", Toast.LENGTH_SHORT).show()
             }
         }
