@@ -9,12 +9,15 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import ru.geekbrains.myweather.databinding.FragmentMainBinding
+import ru.geekbrains.myweather.viewmodel.AppState
 import ru.geekbrains.myweather.viewmodel.MainViewModel
 
 
 class MainFragment : Fragment() {
 
-    private var _binding: FragmentMainBinding? = null // утечка памяти//UPD: Разобрался. Но есть еще одно решение с перемещением области видимости из фрагмента в область функции.
+    private var _binding: FragmentMainBinding? =
+        null // утечка памяти//UPD: Разобрался.
+            // Но есть еще одно решение с перемещением области видимости из фрагмента в область функции.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -33,8 +36,8 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        val observer = object : Observer<Any> {
-            override fun onChanged(data: Any) {
+        val observer = object : Observer<AppState> {
+            override fun onChanged(data: AppState) {
                 renderData(data)
             }
         }
@@ -42,8 +45,21 @@ class MainFragment : Fragment() {
         viewModel.getWeather()
     }
 
-    private fun renderData(data: Any) {
-        Toast.makeText(requireContext(), "Работает", Toast.LENGTH_SHORT).show()
+    private fun renderData(data: AppState) {
+        when (data) {
+            is AppState.Error -> {
+                binding.loadingLayout.visibility = View.GONE
+            }
+            is AppState.Loading -> {
+                binding.loadingLayout.visibility = View.VISIBLE
+
+            }
+            is AppState.Success -> {
+                binding.loadingLayout.visibility = View.GONE
+                Toast.makeText(requireContext(), "Работает", Toast.LENGTH_SHORT).show()
+            }
+        }
+
     }
 
     companion object {
