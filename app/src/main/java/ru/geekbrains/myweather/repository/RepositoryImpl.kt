@@ -2,11 +2,15 @@ package ru.geekbrains.myweather.repository
 
 class RepositoryImpl : Repository {
     override fun getWeatherFromServer(): Weather {
-        Thread.sleep(2000L)
-        return Weather()
+        Thread.sleep(2000L) // эмуляция сетевого запроса
+        return Weather()// эмуляция ответа
     }
 
-    override fun getWeatherFromLocalStorage(): Weather {
-        return Weather()
+    override fun getWorldWeatherFromLocalStorage(): List<Weather> {
+        return getWorldCities()// эмуляция ответа
+    }
+
+    override fun getRussianWeatherFromLocalStorage(): List<Weather> {
+        return getRussianCities() // эмуляция ответа
     }
 }
