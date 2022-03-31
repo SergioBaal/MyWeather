@@ -17,9 +17,11 @@ import ru.geekbrains.myweather.view.details.DetailsFragment
 import ru.geekbrains.myweather.viewmodel.AppState
 import ru.geekbrains.myweather.viewmodel.MainViewModel
 
-class WeatherListFragment : Fragment(),OnItemListClickListener {
+class WeatherListFragment : Fragment(), OnItemListClickListener {
 
-
+    private val viewModel: MainViewModel by lazy {
+        ViewModelProvider(this).get(MainViewModel::class.java)
+    }
     private var _binding: FragmentWeatherListBinding? = null
     private val binding: FragmentWeatherListBinding
         get() {
@@ -51,8 +53,7 @@ class WeatherListFragment : Fragment(),OnItemListClickListener {
     }
 
 
-    private fun switchCities () {
-        val viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+    private fun switchCities() {
         binding.floatingActionButton.setOnClickListener {
             isRussian = !isRussian
             if (isRussian) {
@@ -77,9 +78,8 @@ class WeatherListFragment : Fragment(),OnItemListClickListener {
     }
 
 
-    private fun initRecycler () {
+    private fun initRecycler() {
         binding.recyclerView.adapter = adapter
-        val viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         val observer = object : Observer<AppState> {
             override fun onChanged(data: AppState) {
                 renderData(data)
@@ -89,16 +89,14 @@ class WeatherListFragment : Fragment(),OnItemListClickListener {
     }
 
 
-
     private fun renderData(data: AppState) {
         when (data) {
             is AppState.Error -> {
                 binding.loadingLayout.visibility = View.GONE
                 Snackbar.make(binding.root, "Ошибка ${data.error}", Snackbar.LENGTH_LONG)
-                    .setAction("Повторить?"
+                    .setAction(
+                        "Повторить?"
                     ) {
-                        val viewModel =
-                            ViewModelProvider(this).get(MainViewModel::class.java) //костыль
                         viewModel.getWeather(true)
                     }.show()
             }
