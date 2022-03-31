@@ -36,7 +36,7 @@ class WeatherListFragment : Fragment(),OnItemListClickListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentWeatherListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -94,8 +94,13 @@ class WeatherListFragment : Fragment(),OnItemListClickListener {
         when (data) {
             is AppState.Error -> {
                 binding.loadingLayout.visibility = View.GONE
-                Snackbar.make(binding.root, "Не получилось ${data.error}", Snackbar.LENGTH_LONG)
-                    .show()
+                Snackbar.make(binding.root, "Ошибка ${data.error}", Snackbar.LENGTH_LONG)
+                    .setAction("Повторить?"
+                    ) {
+                        val viewModel =
+                            ViewModelProvider(this).get(MainViewModel::class.java) //костыль
+                        viewModel.getWeather(true)
+                    }.show()
             }
             is AppState.Loading -> {
                 binding.loadingLayout.visibility = View.VISIBLE
