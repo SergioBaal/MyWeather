@@ -53,34 +53,27 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
-        switchCities()
+       switchCities()
 
     }
 
 
     private fun switchCities() {
+
         binding.floatingActionButton.setOnClickListener {
             isRussian = !isRussian
+
             if (isRussian) {
 
                 viewModel.getWeatherRussia()
-                binding.floatingActionButton.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        requireContext(),
-                        R.drawable.ic_russia
-                    )
-                )
+
             } else {
-                binding.floatingActionButton.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        requireContext(),
-                        R.drawable.ic_earth
-                    )
-                )
+
                 viewModel.getWeatherWorld()
             }
         }
-        viewModel.getWeatherRussia()
+
+
     }
 
 
@@ -106,7 +99,7 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
         when (data) {
             is AppState.Error -> {
                 binding.loadingLayout.visibility = View.GONE
-                mainListFragment.showSnackBar("Ошибка!", "Повторить?", {viewModel.getWeather(true)})
+                mainListFragment.showSnackBar("Ошибка!", "Повторить?", {viewModel.getWeather(isRussian)})
 
                     /*
                 Snackbar.make(binding.root, "Ошибка ${data.error}", Snackbar.LENGTH_LONG)
@@ -126,9 +119,29 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
                 binding.loadingLayout.visibility = View.GONE
                 adapter.setData(data.weatherList)
 
+                    if (isRussian) {
+
+                        binding.floatingActionButton.setImageDrawable(
+                            ContextCompat.getDrawable(
+                                requireContext(),
+                                R.drawable.ic_russia
+                            )
+                        )
+                    } else {
+
+                        binding.floatingActionButton.setImageDrawable(
+                            ContextCompat.getDrawable(
+                                requireContext(),
+                                R.drawable.ic_earth
+                            )
+                        )
+
+                    }
+                }
+
+
             }
         }
-    }
 
     companion object {
         @JvmStatic
