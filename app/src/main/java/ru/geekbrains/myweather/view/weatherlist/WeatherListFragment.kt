@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_details.*
+import kotlinx.android.synthetic.main.fragment_weather_list.*
 import ru.geekbrains.myweather.R
 import ru.geekbrains.myweather.databinding.FragmentWeatherListBinding
 import ru.geekbrains.myweather.repository.Weather
@@ -16,6 +18,7 @@ import ru.geekbrains.myweather.utlis.KEY_BUNDLE_WEATHER
 import ru.geekbrains.myweather.view.details.DetailsFragment
 import ru.geekbrains.myweather.viewmodel.AppState
 import ru.geekbrains.myweather.viewmodel.MainViewModel
+
 
 class WeatherListFragment : Fragment(), OnItemListClickListener {
 
@@ -26,9 +29,10 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
     private val binding: FragmentWeatherListBinding
         get() {
             return _binding!!
+
         }
 
-    val adapter = WeatherListAdapter(this)
+    private val adapter = WeatherListAdapter(this)
 
     override fun onDestroy() {
         super.onDestroy()
@@ -50,6 +54,7 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
         switchCities()
+
     }
 
 
@@ -57,6 +62,7 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
         binding.floatingActionButton.setOnClickListener {
             isRussian = !isRussian
             if (isRussian) {
+
                 viewModel.getWeatherRussia()
                 binding.floatingActionButton.setImageDrawable(
                     ContextCompat.getDrawable(
@@ -88,18 +94,31 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
         viewModel.getData().observe(viewLifecycleOwner, observer)
     }
 
+    fun View.showSnackBar (text: String, actionText:String, action: (View) -> Unit, length: Int = Snackbar.LENGTH_INDEFINITE) {
+        Snackbar.make(this, text, length).setAction(actionText, action).show()
+    }
+
+    fun View.showSnackBar (text: String, length: Int = Snackbar.LENGTH_INDEFINITE) {
+        this.let { Snackbar.make(it, text, length).show() }
+    }
 
     private fun renderData(data: AppState) {
         when (data) {
             is AppState.Error -> {
                 binding.loadingLayout.visibility = View.GONE
+                mainListFragment.showSnackBar("Ошибка!", "Повторить?", {viewModel.getWeather(true)})
+
+                    /*
                 Snackbar.make(binding.root, "Ошибка ${data.error}", Snackbar.LENGTH_LONG)
                     .setAction(
                         "Повторить?"
                     ) {
                         viewModel.getWeather(true)
                     }.show()
+                        */
+
             }
+
             is AppState.Loading -> {
                 binding.loadingLayout.visibility = View.VISIBLE
             }
@@ -117,11 +136,11 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
     }
 
     override fun onItemClick(weather: Weather) {
-        val bundle = Bundle()
-        bundle.putParcelable(KEY_BUNDLE_WEATHER, weather)
         requireActivity().supportFragmentManager.beginTransaction().add(
             R.id.container,
-            DetailsFragment.newInstance(bundle)
+            DetailsFragment.newInstance(Bundle().apply {
+                putParcelable(KEY_BUNDLE_WEATHER, weather)
+            })
         ).addToBackStack("").commit()
     }
 }
