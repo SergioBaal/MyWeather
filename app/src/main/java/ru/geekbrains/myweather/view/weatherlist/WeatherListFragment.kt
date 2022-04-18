@@ -53,26 +53,22 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
-       switchCities()
-
+        switchCities()
     }
 
 
     private fun switchCities() {
-
+        viewModel.getWeatherRussia()
         binding.floatingActionButton.setOnClickListener {
+
             isRussian = !isRussian
-
             if (isRussian) {
-
                 viewModel.getWeatherRussia()
-
             } else {
-
                 viewModel.getWeatherWorld()
             }
-        }
 
+        }
 
     }
 
@@ -87,28 +83,37 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
         viewModel.getData().observe(viewLifecycleOwner, observer)
     }
 
-    fun View.showSnackBar (text: String, actionText:String, action: (View) -> Unit, length: Int = Snackbar.LENGTH_INDEFINITE) {
+    private fun View.showSnackBar(
+        text: String,
+        actionText: String,
+        action: (View) -> Unit,
+        length: Int = Snackbar.LENGTH_INDEFINITE
+    ) {
         Snackbar.make(this, text, length).setAction(actionText, action).show()
     }
 
-    fun View.showSnackBar (text: String, length: Int = Snackbar.LENGTH_INDEFINITE) {
+    fun View.showSnackBar(text: String, length: Int = Snackbar.LENGTH_INDEFINITE) {
         this.let { Snackbar.make(it, text, length).show() }
     }
+
 
     private fun renderData(data: AppState) {
         when (data) {
             is AppState.Error -> {
                 binding.loadingLayout.visibility = View.GONE
-                mainListFragment.showSnackBar("Ошибка!", "Повторить?", {viewModel.getWeather(isRussian)})
+                mainListFragment.showSnackBar(
+                    "Ошибка!",
+                    "Повторить?",
+                    { viewModel.getWeather(isRussian) })
 
-                    /*
-                Snackbar.make(binding.root, "Ошибка ${data.error}", Snackbar.LENGTH_LONG)
-                    .setAction(
-                        "Повторить?"
-                    ) {
-                        viewModel.getWeather(true)
-                    }.show()
-                        */
+                /*
+            Snackbar.make(binding.root, "Ошибка ${data.error}", Snackbar.LENGTH_LONG)
+                .setAction(
+                    "Повторить?"
+                ) {
+                    viewModel.getWeather(true)
+                }.show()
+                    */
 
             }
 
@@ -119,29 +124,29 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
                 binding.loadingLayout.visibility = View.GONE
                 adapter.setData(data.weatherList)
 
-                    if (isRussian) {
+                if (isRussian) {
 
-                        binding.floatingActionButton.setImageDrawable(
-                            ContextCompat.getDrawable(
-                                requireContext(),
-                                R.drawable.ic_russia
-                            )
+                    binding.floatingActionButton.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            requireContext(),
+                            R.drawable.ic_russia
                         )
-                    } else {
+                    )
+                } else {
 
-                        binding.floatingActionButton.setImageDrawable(
-                            ContextCompat.getDrawable(
-                                requireContext(),
-                                R.drawable.ic_earth
-                            )
+                    binding.floatingActionButton.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            requireContext(),
+                            R.drawable.ic_earth
                         )
+                    )
 
-                    }
                 }
-
-
             }
+
+
         }
+    }
 
     companion object {
         @JvmStatic
