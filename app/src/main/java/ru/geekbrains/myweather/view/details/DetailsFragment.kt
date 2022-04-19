@@ -50,19 +50,19 @@ class DetailsFragment : Fragment(), OnServerResponse {
     private fun renderData(weather: WeatherDTO) {
 
         with (binding) {
-            with(weather) {
                 loadingLayout.visibility = View.GONE
                 cityName.text = currentCityName
+            with(weather) {
                 temperatureValue.text = factDTO.temperature.toString()
                 feelsLikeValue.text = factDTO.feelsLike.toString()
                 cityCoordinates.text = "${infoDTO.lat} ${infoDTO.lon}"
+            }
                 with(WeatherListFragment()){
-                    mainView.showSnackBar("Успех", 2000)
+                mainView.showSnackBar("Успех", 2000)
                 }
             }
         }
 
-    }
 
 
     companion object {
@@ -77,5 +77,7 @@ class DetailsFragment : Fragment(), OnServerResponse {
     override fun onResponse(weatherDTO: WeatherDTO) {
         renderData(weatherDTO)
     }
+
+
 }
 
