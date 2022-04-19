@@ -1,20 +1,20 @@
 package ru.geekbrains.myweather.view.details
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.gb.k_1919_2.view.weatherlist.WeatherListFragment
-import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_weather_list.*
 import ru.geekbrains.myweather.databinding.FragmentDetailsBinding
+import ru.geekbrains.myweather.repository.OnServerResponse
 import ru.geekbrains.myweather.repository.Weather
+import ru.geekbrains.myweather.repository.WeatherDTO
+import ru.geekbrains.myweather.repository.WeatherLoader
 import ru.geekbrains.myweather.utlis.KEY_BUNDLE_WEATHER
 
 
-class DetailsFragment : Fragment() {
+class DetailsFragment : Fragment(), OnServerResponse {
 
     private var _binding: FragmentDetailsBinding? = null
     private val binding: FragmentDetailsBinding
@@ -36,33 +36,31 @@ class DetailsFragment : Fragment() {
     }
 
 
+    lateinit var currentCityName : String
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         arguments?.getParcelable<Weather>(KEY_BUNDLE_WEATHER)?.let {
-            renderData(it)
+            currentCityName = it.city.name
+                WeatherLoader(this@DetailsFragment).loadWeather(it.city.lat, it.city.lon)
         }
-        /*
-        val weather: Weather = requireArguments().getParcelable<Weather>(KEY_BUNDLE_WEATHER)!!
-        renderData(weather)
-     */
+
     }
 
-    private fun renderData(weather: Weather) {
+    private fun renderData(weather: WeatherDTO) {
+
         with (binding) {
             with(weather) {
                 loadingLayout.visibility = View.GONE
-                cityName.text = city.name.toString()
-                temperatureValue.text = temperature.toString()
-                feelsLikeValue.text = feelsLike.toString()
-                cityCoordinates.text = "${city.lat} ${city.lon}"
-
+                cityName.text = currentCityName
+                temperatureValue.text = factDTO.temperature.toString()
+                feelsLikeValue.text = factDTO.feelsLike.toString()
+                cityCoordinates.text = "${infoDTO.lat} ${infoDTO.lon}"
                 with(WeatherListFragment()){
                     mainView.showSnackBar("Успех", 2000)
                 }
             }
         }
-
-
 
     }
 
@@ -74,6 +72,10 @@ class DetailsFragment : Fragment() {
             fragment.arguments = bundle
             return fragment
         }
+    }
+
+    override fun onResponse(weatherDTO: WeatherDTO) {
+        renderData(weatherDTO)
     }
 }
 
