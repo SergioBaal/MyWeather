@@ -15,8 +15,8 @@ import ru.geekbrains.myweather.databinding.FragmentWeatherListBinding
 import ru.geekbrains.myweather.repository.Weather
 import ru.geekbrains.myweather.utlis.KEY_BUNDLE_WEATHER
 import ru.geekbrains.myweather.view.details.DetailsFragment
-import ru.geekbrains.myweather.viewmodel.AppState
 import ru.geekbrains.myweather.viewmodel.MainViewModel
+import ru.geekbrains.myweather.viewmodel.WeatherListAppState
 
 
 class WeatherListFragment : Fragment(), OnItemListClickListener {
@@ -74,52 +74,32 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
 
     private fun initRecycler() {
         binding.recyclerView.adapter = adapter
-        val observer = object : Observer<AppState> {
-            override fun onChanged(data: AppState) {
+        val observer = object : Observer<WeatherListAppState> {
+            override fun onChanged(data: WeatherListAppState) {
                 renderData(data)
             }
         }
         viewModel.getData().observe(viewLifecycleOwner, observer)
     }
 
-    private fun View.showSnackBar(
-        text: String,
-        actionText: String,
-        action: (View) -> Unit,
-        length: Int = Snackbar.LENGTH_INDEFINITE
-    ) {
-        Snackbar.make(this, text, length).setAction(actionText, action).show()
-    }
-
-    fun View.showSnackBar(text: String, length: Int = Snackbar.LENGTH_INDEFINITE) {
-        this.let { Snackbar.make(it, text, length).show() }
-    }
 
 
-    private fun renderData(data: AppState) {
+    private fun renderData(data: WeatherListAppState) {
         when (data) {
-            is AppState.Error -> {
+            is WeatherListAppState.Error -> {
                 binding.loadingLayout.visibility = View.GONE
                 mainListFragment.showSnackBar(
                     "Ошибка!",
                     "Повторить?",
                     { viewModel.getWeather(isRussian) })
-
-                /*
-            Snackbar.make(binding.root, "Ошибка ${data.error}", Snackbar.LENGTH_LONG)
-                .setAction(
-                    "Повторить?"
-                ) {
-                    viewModel.getWeather(true)
-                }.show()
-                    */
-
             }
 
-            is AppState.Loading -> {
+
+            is WeatherListAppState.Loading -> {
                 binding.loadingLayout.visibility = View.VISIBLE
             }
-            is AppState.Success -> {
+
+            is WeatherListAppState.Success -> {
                 binding.loadingLayout.visibility = View.GONE
                 adapter.setData(data.weatherList)
 
@@ -161,4 +141,14 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
         ).addToBackStack("").commit()
     }
 }
+
+private fun View.showSnackBar(
+    text: String,
+    actionText: String,
+    action: (View) -> Unit,
+    length: Int = Snackbar.LENGTH_INDEFINITE
+) {
+    Snackbar.make(this, text, length).setAction(actionText, action).show()
+}
+
 
