@@ -8,20 +8,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.gb.k_1919_2.view.weatherlist.WeatherListFragment
-
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_weather_list.*
 import ru.geekbrains.myweather.databinding.FragmentDetailsBinding
 import ru.geekbrains.myweather.repository.OnServerResponse
 import ru.geekbrains.myweather.repository.Weather
 import ru.geekbrains.myweather.repository.WeatherDTO
-import ru.geekbrains.myweather.repository.WeatherLoader
 import ru.geekbrains.myweather.utlis.*
-import ru.geekbrains.myweather.viewmodel.DetailsAppState
 
 
 class DetailsFragment : Fragment(), OnServerResponse {
@@ -41,7 +35,8 @@ class DetailsFragment : Fragment(), OnServerResponse {
     val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             intent?.let {
-                val weatherDTO = it.getParcelableExtra<WeatherDTO>(KEY_BUNDLE_SERVICE_BROADCAST_WEATHER)
+                val weatherDTO =
+                    it.getParcelableExtra<WeatherDTO>(KEY_BUNDLE_SERVICE_BROADCAST_WEATHER)
                 onResponse(weatherDTO)
             }
         }
@@ -60,25 +55,21 @@ class DetailsFragment : Fragment(), OnServerResponse {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        LocalBroadcastManager.getInstance(requireContext())
+            .registerReceiver(receiver, IntentFilter(KEY_WAVE_SERVICE_BROADCAST))
 
-        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(receiver,
-            IntentFilter(KEY_WAVE_SERVICE_BROADCAST))
         arguments?.getParcelable<Weather>(KEY_BUNDLE_WEATHER)?.let {
             currentCityName = it.city.name
-           // WeatherLoader(this@DetailsFragment).loadWeather(it.city.lat, it.city.lon)
-
-            requireActivity().startService(Intent(requireContext(), DetailsService::class.java).apply {
-                putExtra(KEY_BUNDLE_LAT, it.city.lat)
-                putExtra(KEY_BUNDLE_LON, it.city.lon)
-            })
+            // WeatherLoader(this@DetailsFragment).loadWeather(it.city.lat, it.city.lon) // работа с WeatherLoader
+            requireActivity().startService(  //работа с сервисом
+                Intent(requireContext(), DetailsService::class.java).apply {
+                    putExtra(KEY_BUNDLE_LAT, it.city.lat)
+                    putExtra(KEY_BUNDLE_LON, it.city.lon)
+                })
         }
-
-
-
     }
 
     private fun renderData(weather: WeatherDTO?) {
-
         if (weather == null) {
             with(binding) {
                 fragmentDetails.showSnackBar(
@@ -88,7 +79,7 @@ class DetailsFragment : Fragment(), OnServerResponse {
                         arguments?.getParcelable<Weather>(KEY_BUNDLE_WEATHER)?.let {
                             currentCityName = it.city.name
                             // WeatherLoader(this@DetailsFragment).loadWeather(it.city.lat, it.city.lon)
-
+                            // вызываем включение сервиса при нажатии на "повторить"
                             requireActivity().startService(
                                 Intent(
                                     requireContext(),

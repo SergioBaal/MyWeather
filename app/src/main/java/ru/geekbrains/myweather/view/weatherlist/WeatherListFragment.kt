@@ -83,7 +83,6 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
     }
 
 
-
     private fun renderData(data: WeatherListAppState) {
         when (data) {
             is WeatherListAppState.Error -> {

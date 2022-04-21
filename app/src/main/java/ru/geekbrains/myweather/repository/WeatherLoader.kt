@@ -7,22 +7,20 @@ import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import ru.geekbrains.myweather.BuildConfig
 import ru.geekbrains.myweather.utlis.X_API_KEY
-import ru.geekbrains.myweather.utlis.YANDEX_DOMAIN
 import ru.geekbrains.myweather.utlis.YANDEX_DOMAIN_HARD_MODE
 import ru.geekbrains.myweather.utlis.YANDEX_PATH
-import ru.geekbrains.myweather.viewmodel.DetailsAppState
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
-import javax.net.ssl.HttpsURLConnection
 
 class WeatherLoader(private val onServerResponseListener: OnServerResponse) {
 
 
     fun loadWeather(lat: Double, lon: Double) {
-       // val urlText = "$YANDEX_DOMAIN${YANDEX_PATH}lat=$lat&lon=$lon" //"https://api.weather.yandex.ru/v2/informers?lat=$lat&lon=$lon"
-        val urlText = "$YANDEX_DOMAIN_HARD_MODE${YANDEX_PATH}lat=$lat&lon=$lon"   //"http://212.86.114.27/v2/informers?lat=$lat&lon=$lon"
+        // val urlText = "$YANDEX_DOMAIN${YANDEX_PATH}lat=$lat&lon=$lon" //"https://api.weather.yandex.ru/v2/informers?lat=$lat&lon=$lon"
+        val urlText =
+            "$YANDEX_DOMAIN_HARD_MODE${YANDEX_PATH}lat=$lat&lon=$lon"   //"http://212.86.114.27/v2/informers?lat=$lat&lon=$lon"
         val uri = URL(urlText)
         Thread {
             val urlConnection: HttpURLConnection =
@@ -40,7 +38,8 @@ class WeatherLoader(private val onServerResponseListener: OnServerResponse) {
                 when (responseCode) {
                     in responseOk -> {
                         val buffer = BufferedReader(InputStreamReader(urlConnection.inputStream))
-                        val trueWeatherDTO: WeatherDTO? = Gson().fromJson(buffer, WeatherDTO::class.java)
+                        val trueWeatherDTO: WeatherDTO? =
+                            Gson().fromJson(buffer, WeatherDTO::class.java)
                         isTrueAnswer(true, trueWeatherDTO)
                     }
                     in clientside -> {
@@ -49,7 +48,7 @@ class WeatherLoader(private val onServerResponseListener: OnServerResponse) {
                     }
                     in serverside -> {
                         Log.i("@@@", "Ошибка на стороне сервера $responseMessage")
-                        isTrueAnswer(false,null)
+                        isTrueAnswer(false, null)
                     }
                 }
             } catch (e: NullPointerException) {
@@ -59,14 +58,13 @@ class WeatherLoader(private val onServerResponseListener: OnServerResponse) {
             } catch (e: JsonSyntaxException) {
                 Log.i("@@@", "Ошибка: ${e.message}")
                 isTrueAnswer(false, null)
-            }
-            finally {
+            } finally {
                 urlConnection.disconnect()
             }
         }.start()
     }
 
-    private fun isTrueAnswer (boolean: Boolean, trueOrFalseWeatherDTO : WeatherDTO?) {
+    private fun isTrueAnswer(boolean: Boolean, trueOrFalseWeatherDTO: WeatherDTO?) {
         if (boolean) {
             Handler(Looper.getMainLooper()).post {
                 onServerResponseListener.onResponse(trueOrFalseWeatherDTO)

@@ -23,4 +23,4 @@ data class ForecastDTO(
     val sunset: String,
     @SerializedName("week")
     val week: Int
-): Parcelable
+) : Parcelable

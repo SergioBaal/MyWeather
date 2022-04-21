@@ -17,4 +17,4 @@ data class WeatherDTO(
     val now: Int,
     @SerializedName("now_dt")
     val nowDt: String
-): Parcelable
+) : Parcelable
