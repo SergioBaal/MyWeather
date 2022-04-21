@@ -11,11 +11,15 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
+import okhttp3.*
+import ru.geekbrains.myweather.BuildConfig
 import ru.geekbrains.myweather.databinding.FragmentDetailsBinding
 import ru.geekbrains.myweather.repository.OnServerResponse
 import ru.geekbrains.myweather.repository.Weather
 import ru.geekbrains.myweather.repository.WeatherDTO
 import ru.geekbrains.myweather.utlis.*
+import java.io.IOException
 
 
 class DetailsFragment : Fragment(), OnServerResponse {
@@ -60,14 +64,57 @@ class DetailsFragment : Fragment(), OnServerResponse {
 
         arguments?.getParcelable<Weather>(KEY_BUNDLE_WEATHER)?.let {
             currentCityName = it.city.name
-            // WeatherLoader(this@DetailsFragment).loadWeather(it.city.lat, it.city.lon) // работа с WeatherLoader
-            requireActivity().startService(  //работа с сервисом
-                Intent(requireContext(), DetailsService::class.java).apply {
-                    putExtra(KEY_BUNDLE_LAT, it.city.lat)
-                    putExtra(KEY_BUNDLE_LON, it.city.lon)
-                })
+            /**
+             * <Работа с WeatherLoader:>
+             * WeatherLoader(this@DetailsFragment).loadWeather(it.city.lat, it.city.lon)
+             * */
+            /**
+             * Работа с сервисом:
+             * requireActivity().startService(
+            Intent(requireContext(), DetailsService::class.java).apply {
+            putExtra(KEY_BUNDLE_LAT, it.city.lat)
+            putExtra(KEY_BUNDLE_LON, it.city.lon)
+            })
+             */
+            /**
+             * Работа с OkHttp:
+             */
+            getWeather(it.city.lat, it.city.lon)
         }
     }
+
+    private fun getWeather(lat: Double, lon: Double) {
+        binding.loadingLayout.visibility = View.VISIBLE
+
+        val client = OkHttpClient()
+        val builder = Request.Builder()
+        builder.addHeader(X_API_KEY, BuildConfig.WEATHER_API_KEY)
+        builder.url("$YANDEX_DOMAIN${YANDEX_PATH}lat=$lat&lon=$lon")
+        val request = builder.build()
+
+        val callback: Callback = object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                //TODO обработать ошибки
+                binding.loadingLayout.visibility = View.GONE
+            }
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val weatherDTO: WeatherDTO =
+                        Gson().fromJson(response.body()!!.string(), WeatherDTO::class.java)
+                    requireActivity().runOnUiThread { renderData(weatherDTO) }
+                } else {
+                    //TODO обработать ошибки
+                }
+            }
+        }
+        binding.loadingLayout.visibility = View.GONE
+
+        val call = client.newCall(request)
+        //call.execute()// синхронно
+        call.enqueue(callback) //асинхронно
+
+    }
+
 
     private fun renderData(weather: WeatherDTO?) {
         if (weather == null) {
@@ -78,8 +125,10 @@ class DetailsFragment : Fragment(), OnServerResponse {
                     {
                         arguments?.getParcelable<Weather>(KEY_BUNDLE_WEATHER)?.let {
                             currentCityName = it.city.name
-                            // WeatherLoader(this@DetailsFragment).loadWeather(it.city.lat, it.city.lon)
-                            // вызываем включение сервиса при нажатии на "повторить"
+                            /** вызываем включение WeatherLoader при нажатии на "повторить"
+                             * WeatherLoader(this@DetailsFragment).loadWeather(it.city.lat, it.city.lon)*/
+
+                            /** вызываем включение сервиса при нажатии на "повторить" */
                             requireActivity().startService(
                                 Intent(
                                     requireContext(),
@@ -94,7 +143,7 @@ class DetailsFragment : Fragment(), OnServerResponse {
         } else {
             with(binding) {
                 with(weather) {
-                    loadingLayout.visibility = android.view.View.GONE
+                    loadingLayout.visibility = View.GONE
                     cityName.text = currentCityName
                     temperatureValue.text = factDTO.temperature.toString()
                     feelsLikeValue.text = factDTO.feelsLike.toString()
