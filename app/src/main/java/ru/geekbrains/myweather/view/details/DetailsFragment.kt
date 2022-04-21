@@ -40,15 +40,11 @@ class DetailsFragment : Fragment(), OnServerResponse {
 
     val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            intent?.let { intent ->
-                intent.getParcelableExtra<WeatherDTO>(KEY_BUNDLE_SERVICE_BROADCAST_WEATHER)?.let {
-                    onResponse(it,DetailsAppState.Success) // НЕ ПОЛУЧИЛОСЬ ВЫВЕСТИ СНЕКБАР!
-                }
-
-
+            intent?.let {
+                val weatherDTO = it.getParcelableExtra<WeatherDTO>(KEY_BUNDLE_SERVICE_BROADCAST_WEATHER)
+                onResponse(weatherDTO)
             }
         }
-
     }
 
     override fun onCreateView(
@@ -81,42 +77,40 @@ class DetailsFragment : Fragment(), OnServerResponse {
 
     }
 
-    private fun renderData(weather: WeatherDTO?, detailsAppState: DetailsAppState) {
+    private fun renderData(weather: WeatherDTO?) {
 
-        when (detailsAppState) {
-            is DetailsAppState.Success -> {
-
-                with(binding) {
-                    with(weather!!) {
-                        loadingLayout.visibility = android.view.View.GONE
-                        cityName.text = currentCityName
-                        temperatureValue.text = factDTO.temperature.toString()
-                        feelsLikeValue.text = factDTO.feelsLike.toString()
-                        cityCoordinates.text = "${infoDTO.lat} ${infoDTO.lon}"
-                    }
-                }
-
-            }
-            is DetailsAppState.Error -> {
-                with(binding) {
-                    fragmentDetails.showSnackBar(
-                        "Ошибка!",
-                        "Повторить?",
-                        {  arguments?.getParcelable<Weather>(KEY_BUNDLE_WEATHER)?.let {
+        if (weather == null) {
+            with(binding) {
+                fragmentDetails.showSnackBar(
+                    "Ошибка!",
+                    "Повторить?",
+                    {
+                        arguments?.getParcelable<Weather>(KEY_BUNDLE_WEATHER)?.let {
                             currentCityName = it.city.name
                             // WeatherLoader(this@DetailsFragment).loadWeather(it.city.lat, it.city.lon)
 
-                            requireActivity().startService(Intent(requireContext(), DetailsService::class.java).apply {
-                                putExtra(KEY_BUNDLE_LAT, it.city.lat)
-                                putExtra(KEY_BUNDLE_LON, it.city.lon)
-                            })
-                        } })
+                            requireActivity().startService(
+                                Intent(
+                                    requireContext(),
+                                    DetailsService::class.java
+                                ).apply {
+                                    putExtra(KEY_BUNDLE_LAT, it.city.lat)
+                                    putExtra(KEY_BUNDLE_LON, it.city.lon)
+                                })
+                        }
+                    })
+            }
+        } else {
+            with(binding) {
+                with(weather) {
+                    loadingLayout.visibility = android.view.View.GONE
+                    cityName.text = currentCityName
+                    temperatureValue.text = factDTO.temperature.toString()
+                    feelsLikeValue.text = factDTO.feelsLike.toString()
+                    cityCoordinates.text = "${infoDTO.lat} ${infoDTO.lon}"
                 }
             }
-
         }
-
-
     }
 
 
@@ -129,8 +123,8 @@ class DetailsFragment : Fragment(), OnServerResponse {
         }
     }
 
-    override fun onResponse(weatherDTO: WeatherDTO?, detailsAppState: DetailsAppState) {
-        renderData(weatherDTO, detailsAppState)
+    override fun onResponse(weatherDTO: WeatherDTO?) {
+        renderData(weatherDTO)
     }
 }
 

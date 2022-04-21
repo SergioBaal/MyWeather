@@ -46,35 +46,35 @@ class DetailsService(val name: String = "") : IntentService(name) {
             val responseOk = 200..299
 
             val buffer = BufferedReader(InputStreamReader(urlConnection.inputStream))
-            val trueWeatherDTO: WeatherDTO? = Gson().fromJson(buffer, WeatherDTO::class.java)
+            val weatherDTO: WeatherDTO? = Gson().fromJson(buffer, WeatherDTO::class.java)
 
             when (responseCode) {
                 in responseOk -> {
-                    DetailsAppState.Success
-                    isTrueAnswer(true, trueWeatherDTO)
+
+                    isTrueAnswer(weatherDTO)
 
                 }
                 in clientside -> {
 
                     Log.i("@@@", "Ошибка на стороне клиента $responseMessage")
-                    isTrueAnswer(false, null)
+                    isTrueAnswer(null)
                 }
                 in serverside -> {
                     Log.i("@@@", "Ошибка на стороне сервера $responseMessage")
-                    isTrueAnswer(false, null)
+                    isTrueAnswer(null)
                 }
             }
             } catch (e: NullPointerException) {
                 Log.i("@@@", "Ошибка NullPointerException: ${e.message}")
-                isTrueAnswer(false, null)
+                isTrueAnswer(null)
 
             } catch (e : FileNotFoundException) {
                 Log.i("@@@", "Ошибка FileNotFoundException: ${e.message}")
-                isTrueAnswer(false, null)
+                isTrueAnswer(null)
             }
             catch (e: JsonSyntaxException) {
                 Log.i("@@@", "Ошибка: ${e.message}")
-                isTrueAnswer(false, null)
+                isTrueAnswer(null)
             }
             finally {
                 urlConnection.disconnect()
@@ -83,27 +83,14 @@ class DetailsService(val name: String = "") : IntentService(name) {
 
 }
 
-    private fun isTrueAnswer(boolean: Boolean, trueOrFalseWeatherDTO: WeatherDTO?) {
-        if (boolean) {
-            val message = Intent(KEY_WAVE_SERVICE_BROADCAST)
-            message.putExtra(
-                KEY_BUNDLE_SERVICE_BROADCAST_WEATHER, trueOrFalseWeatherDTO
-            )
+    private fun isTrueAnswer(weatherDTO: WeatherDTO?) {
 
-
-           // sendBroadcast(message)
-            LocalBroadcastManager.getInstance(this).sendBroadcast(message)
-        } else {
-            DetailsAppState.Error
-            val message = Intent(KEY_WAVE_SERVICE_BROADCAST)
-            message.putExtra(
-                KEY_BUNDLE_SERVICE_BROADCAST_WEATHER, trueOrFalseWeatherDTO
-            )
-
-
-           // sendBroadcast(message)
-            LocalBroadcastManager.getInstance(this).sendBroadcast(message)
-        }
+        val message = Intent(KEY_WAVE_SERVICE_BROADCAST)
+        message.putExtra(
+            KEY_BUNDLE_SERVICE_BROADCAST_WEATHER, weatherDTO
+        )
+        // sendBroadcast(message)
+        LocalBroadcastManager.getInstance(this).sendBroadcast(message)
     }
 }
 

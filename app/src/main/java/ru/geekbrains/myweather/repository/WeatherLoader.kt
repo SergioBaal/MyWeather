@@ -69,11 +69,11 @@ class WeatherLoader(private val onServerResponseListener: OnServerResponse) {
     private fun isTrueAnswer (boolean: Boolean, trueOrFalseWeatherDTO : WeatherDTO?) {
         if (boolean) {
             Handler(Looper.getMainLooper()).post {
-                onServerResponseListener.onResponse(trueOrFalseWeatherDTO, DetailsAppState.Success)
+                onServerResponseListener.onResponse(trueOrFalseWeatherDTO)
             }
         } else {
             Handler(Looper.getMainLooper()).post {
-                onServerResponseListener.onResponse(trueOrFalseWeatherDTO, DetailsAppState.Error)
+                onServerResponseListener.onResponse(trueOrFalseWeatherDTO)
             }
         }
 
