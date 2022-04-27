@@ -45,11 +45,11 @@ class DetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getLiveData().observe(viewLifecycleOwner, object : Observer<DetailsState>  {
+        viewModel.getLiveData().observe(viewLifecycleOwner, object : Observer<DetailsState> {
             override fun onChanged(t: DetailsState) {
                 renderData(t)
             }
-         })
+        })
 
         arguments?.getParcelable<Weather>(KEY_BUNDLE_WEATHER)?.let {
             viewModel.getWeather(it.city)
@@ -81,7 +81,18 @@ class DetailsFragment : Fragment() {
 
     private fun renderData(detailsState: DetailsState) {
         when (detailsState) {
-            is DetailsState.Error -> {}
+            is DetailsState.Error -> {
+                with(binding) {
+                    fragmentDetails.showSnackBar(
+                        "Ошибка!",
+                        "Повторить?",
+                        {
+                            arguments?.getParcelable<Weather>(KEY_BUNDLE_WEATHER)?.let {
+                                viewModel.getWeather(it.city)
+                            }
+                        })
+                }
+            }
             is DetailsState.Loading -> {}
             is DetailsState.Success -> {
                 val weather = detailsState.weather

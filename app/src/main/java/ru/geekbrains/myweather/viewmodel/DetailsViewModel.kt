@@ -4,12 +4,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ru.geekbrains.myweather.repository.City
 import ru.geekbrains.myweather.repository.DetailsRepository
-import ru.geekbrains.myweather.repository.DetailsRepositoryOkHttpImpl
+import ru.geekbrains.myweather.repository.DetailsRepositoryRetrofit2Impl
 import ru.geekbrains.myweather.repository.Weather
 
 class DetailsViewModel(
     private val liveData: MutableLiveData<DetailsState> = MutableLiveData(),
-    private val repository: DetailsRepository = DetailsRepositoryOkHttpImpl()
+    private val repository: DetailsRepository = DetailsRepositoryRetrofit2Impl()
 ) : ViewModel() {
 
     fun getLiveData() = liveData
@@ -22,7 +22,7 @@ class DetailsViewModel(
             }
 
             override fun onFail() {
-                //  TODO HW   liveData.postValue(DetailsState.Error()) ("Not yet implemented")
+                liveData.postValue(DetailsState.Error(Throwable()))
             }
         })
     }
@@ -30,8 +30,6 @@ class DetailsViewModel(
 
     interface Callback {
         fun onResponse(weather: Weather)
-
-        // TODO HW Fail
         fun onFail()
     }
 
