@@ -4,9 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import coil.ImageLoader
+import coil.decode.SvgDecoder
+import coil.load
+import coil.request.ImageRequest
 import com.google.android.material.snackbar.Snackbar
 import ru.geekbrains.myweather.databinding.FragmentDetailsBinding
 import ru.geekbrains.myweather.repository.Weather
@@ -45,11 +49,9 @@ class DetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getLiveData().observe(viewLifecycleOwner, object : Observer<DetailsState> {
-            override fun onChanged(t: DetailsState) {
-                renderData(t)
-            }
-        })
+        viewModel.getLiveData().observe(
+            viewLifecycleOwner
+        ) { t -> renderData(t) }
 
         arguments?.getParcelable<Weather>(KEY_BUNDLE_WEATHER)?.let {
             viewModel.getWeather(it.city)
@@ -104,9 +106,33 @@ class DetailsFragment : Fragment() {
                         feelsLikeValue.text = feelsLike.toString()
                         cityCoordinates.text = "${city.lat} ${city.lon}"
                     }
+                    /* Glide.with(requireContext())
+                         .load("https://freepngimg.com/thumb/city/36275-3-city-hd.png")
+                         .into(headerCityIcon)*/
+
+                    /*  Picasso.get()?.load("https://freepngimg.com/thumb/city/36275-3-city-hd.png")
+                          ?.into(headerCityIcon) */
+
+                    headerCityIcon.load("https://freepngimg.com/thumb/city/36275-3-city-hd.png")
+                    icon.loadSvg("https://yastatic.net/weather/i/icons/blueye/color/svg/${weather.icon}.svg")
+
+
                 }
             }
         }
+    }
+
+    private fun ImageView.loadSvg(url: String) {
+        val imageLoader = ImageLoader.Builder(this.context)
+            .componentRegistry { add(SvgDecoder(this@loadSvg.context)) }
+            .build()
+        val request = ImageRequest.Builder(this.context)
+            .crossfade(true)
+            .crossfade(500)
+            .data(url)
+            .target(this)
+            .build()
+        imageLoader.enqueue(request)
     }
 
     /*  if (weather == null) {
