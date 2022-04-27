@@ -22,7 +22,8 @@ class DetailsService(val name: String = "") : IntentService(name) {
             val lon = it.getDoubleExtra(KEY_BUNDLE_LON, 0.0)
             Log.d("@@@", "work DetailsService $lat $lon")
             //val urlText = "$YANDEX_DOMAIN${YANDEX_PATH}lat=$lat&lon=$lon"//"https://api.weather.yandex.ru/v2/informers?lat=$lat&lon=$lon"
-            val urlText = "$YANDEX_DOMAIN_HARD_MODE${YANDEX_PATH}lat=$lat&lon=$lon"  //"http://212.86.114.27/v2/informers?lat=$lat&lon=$lon"
+            val urlText =
+                "$YANDEX_DOMAIN_HARD_MODE${YANDEX_PATH}lat=$lat&lon=$lon"  //"http://212.86.114.27/v2/informers?lat=$lat&lon=$lon"
             val uri = URL(urlText)
             val urlConnection: HttpURLConnection =
                 (uri.openConnection() as HttpURLConnection).apply {
