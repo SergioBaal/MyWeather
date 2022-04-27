@@ -89,12 +89,18 @@ class DetailsFragment : Fragment(), OnServerResponse {
         val client = OkHttpClient()
         val builder = Request.Builder()
         builder.addHeader(X_API_KEY, BuildConfig.WEATHER_API_KEY)
-        builder.url("$YANDEX_DOMAIN${YANDEX_PATH}lat=$lat&lon=$lon")
+        builder.url("$YANDEX_DOMAIN_HARD_MODE${YANDEX_PATH}lat=$lat&lon=$lon")
         val request = builder.build()
 
         val callback: Callback = object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                //TODO обработать ошибки
+                with (binding) {
+                    fragmentDetails.showSnackBar(
+                        "Ошибка!",
+                        "Повторить?",
+                        { getWeather(lat, lon) } )
+                }
+
                 binding.loadingLayout.visibility = View.GONE
             }
             override fun onResponse(call: Call, response: Response) {
@@ -103,7 +109,13 @@ class DetailsFragment : Fragment(), OnServerResponse {
                         Gson().fromJson(response.body()!!.string(), WeatherDTO::class.java)
                     requireActivity().runOnUiThread { renderData(weatherDTO) }
                 } else {
-                    //TODO обработать ошибки
+                    with (binding) {
+                        fragmentDetails.showSnackBar(
+                            "Ошибка!",
+                            "Повторить?",
+                            { getWeather(lat, lon) } )
+                    }
+
                 }
             }
         }
