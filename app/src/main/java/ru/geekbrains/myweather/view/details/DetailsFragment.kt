@@ -12,6 +12,7 @@ import coil.decode.SvgDecoder
 import coil.load
 import coil.request.ImageRequest
 import com.google.android.material.snackbar.Snackbar
+import ru.geekbrains.myweather.R
 import ru.geekbrains.myweather.databinding.FragmentDetailsBinding
 import ru.geekbrains.myweather.repository.Weather
 import ru.geekbrains.myweather.utlis.KEY_BUNDLE_WEATHER
@@ -113,7 +114,10 @@ class DetailsFragment : Fragment() {
                     /*  Picasso.get()?.load("https://freepngimg.com/thumb/city/36275-3-city-hd.png")
                           ?.into(headerCityIcon) */
 
-                    headerCityIcon.load("https://freepngimg.com/thumb/city/36275-3-city-hd.png")
+                    headerCityIcon.load("https://freepngimg.com/thumb/city/36275-3-city-hd.png"){
+                        placeholder(R.drawable.ic_russia)
+                        error(R.drawable.ic_earth)
+                    }
                     icon.loadSvg("https://yastatic.net/weather/i/icons/blueye/color/svg/${weather.icon}.svg")
 
 

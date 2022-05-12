@@ -11,14 +11,13 @@ import ru.geekbrains.myweather.utlis.YANDEX_DOMAIN_HARD_MODE
 import ru.geekbrains.myweather.utlis.convertDtoToModel
 import ru.geekbrains.myweather.viewmodel.DetailsViewModel
 
+val weatherAPI = Retrofit.Builder().apply {
+    baseUrl(YANDEX_DOMAIN_HARD_MODE)
+    addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
+}.build().create(WeatherAPI::class.java)
+
 class DetailsRepositoryRetrofit2Impl : DetailsRepository {
     override fun getWeatherDetails(city: City, callbackMy: DetailsViewModel.Callback) {
-        val weatherAPI = Retrofit.Builder().apply {
-            baseUrl(YANDEX_DOMAIN_HARD_MODE)
-            addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
-        }.build().create(WeatherAPI::class.java)
-
-
         weatherAPI.getWeather(BuildConfig.WEATHER_API_KEY, city.lat, city.lon)
             .enqueue(object : Callback<WeatherDTO> {
                 override fun onResponse(call: Call<WeatherDTO>, response: Response<WeatherDTO>) {
@@ -32,7 +31,6 @@ class DetailsRepositoryRetrofit2Impl : DetailsRepository {
                         callbackMy.onFail()
                     }
                 }
-
                 override fun onFailure(call: Call<WeatherDTO>, t: Throwable) {
                     callbackMy.onFail()
                 }
