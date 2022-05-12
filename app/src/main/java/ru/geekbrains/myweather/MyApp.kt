@@ -16,15 +16,13 @@ class MyApp: Application() {
         private var db: MyWeatherDB? = null
         private var appContext: MyApp? = null
         fun getHistoryDao(): HistoryDao {
-            Thread {
                 if (db == null) {
                     if (appContext != null) {
-                        db = Room.databaseBuilder(appContext!!, MyWeatherDB::class.java, "olo").build()
+                        db = Room.databaseBuilder(appContext!!, MyWeatherDB::class.java, "olo").allowMainThreadQueries().build() //TODO что-то не получилось с потоком
                     } else {
                         throw IllegalStateException("что-то пошло не так")
                     }
                 }
-            }.start()
             return db!!.historyDao()
         }
     }

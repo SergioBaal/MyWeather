@@ -10,7 +10,7 @@ import ru.geekbrains.myweather.utlis.YANDEX_PATH
 import ru.geekbrains.myweather.utlis.convertDtoToModel
 import ru.geekbrains.myweather.viewmodel.DetailsViewModel
 
-class DetailsRepositoryOkHttpImpl : DetailsRepository {
+class DetailsRepositoryOkHttpImpl : DetailsRepositoryOne {
     override fun getWeatherDetails(city: City, callback: DetailsViewModel.Callback) {
         val client = OkHttpClient()
         val builder = Request.Builder()

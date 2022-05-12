@@ -1,4 +1,4 @@
-package com.gb.k_1919_2.view.weatherlist
+package ru.geekbrains.myweather.view.weatherlist
 
 import android.os.Bundle
 import android.view.LayoutInflater

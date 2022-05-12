@@ -16,7 +16,7 @@ val weatherAPI = Retrofit.Builder().apply {
     addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
 }.build().create(WeatherAPI::class.java)
 
-class DetailsRepositoryRetrofit2Impl : DetailsRepository {
+class DetailsRepositoryRetrofit2Impl : DetailsRepositoryOne {
     override fun getWeatherDetails(city: City, callbackMy: DetailsViewModel.Callback) {
         weatherAPI.getWeather(BuildConfig.WEATHER_API_KEY, city.lat, city.lon)
             .enqueue(object : Callback<WeatherDTO> {
