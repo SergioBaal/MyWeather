@@ -1,5 +1,6 @@
 package ru.geekbrains.myweather.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ru.geekbrains.myweather.repository.*
@@ -31,6 +32,7 @@ class DetailsViewModel(
 
             override fun onFail() {
               liveData.postValue(DetailsState.Error(Throwable()))
+                Log.d("@@@", " ошибка в detailsViewModel 1" )
             }
         })
 
@@ -49,6 +51,7 @@ class DetailsViewModel(
         fun onFail() {
             with (DetailsViewModel()) {
                 liveData.postValue(DetailsState.Error(Throwable()))
+                Log.d("@@@", " ошибка в detailsViewModel 2" )
             }
         }
     }
