@@ -13,6 +13,7 @@ const val KEY_BUNDLE_SERVICE_BROADCAST_WEATHER = "weather_s_b"
 const val KEY_WAVE_SERVICE_BROADCAST = "wave"
 const val KEY_BUNDLE_LAT = "lat"
 const val KEY_BUNDLE_LON = "lon"
+const val KEY_SP_IS_RUSSIAN = "isRussian"
 
 
 class Utils {

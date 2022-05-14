@@ -1,9 +1,11 @@
 package ru.geekbrains.myweather.view.weatherlist
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -14,6 +16,7 @@ import ru.geekbrains.myweather.R
 import ru.geekbrains.myweather.databinding.FragmentWeatherListBinding
 import ru.geekbrains.myweather.repository.Weather
 import ru.geekbrains.myweather.utlis.KEY_BUNDLE_WEATHER
+import ru.geekbrains.myweather.utlis.KEY_SP_IS_RUSSIAN
 import ru.geekbrains.myweather.view.details.DetailsFragment
 import ru.geekbrains.myweather.viewmodel.MainViewModel
 import ru.geekbrains.myweather.viewmodel.WeatherListAppState
@@ -44,7 +47,9 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
     ): View {
         _binding = FragmentWeatherListBinding.inflate(inflater, container, false)
         return binding.root
+
     }
+
 
     var isRussian = true
 
@@ -53,21 +58,39 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
         switchCities()
+
+
+
+
     }
 
 
     private fun switchCities() {
-        viewModel.getWeatherRussia()
+        val sp = requireActivity().getSharedPreferences(KEY_SP_IS_RUSSIAN, Context.MODE_PRIVATE)
+        val editor = sp.edit()
+        if (sp.getBoolean(KEY_SP_IS_RUSSIAN, true)) {
+            isRussian = true
+            viewModel.getWeatherRussia()
+        } else {
+            isRussian = false
+            viewModel.getWeatherWorld()
+        }
+
         binding.floatingActionButton.setOnClickListener {
 
             isRussian = !isRussian
             if (isRussian) {
                 viewModel.getWeatherRussia()
+                editor.putBoolean(KEY_SP_IS_RUSSIAN, true)
+                editor.apply()
             } else {
                 viewModel.getWeatherWorld()
+                editor.putBoolean(KEY_SP_IS_RUSSIAN, false)
+                editor.apply()
             }
 
         }
+
 
     }
 
@@ -77,6 +100,7 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
         val observer = object : Observer<WeatherListAppState> {
             override fun onChanged(data: WeatherListAppState) {
                 renderData(data)
+
             }
         }
         viewModel.getData().observe(viewLifecycleOwner, observer)

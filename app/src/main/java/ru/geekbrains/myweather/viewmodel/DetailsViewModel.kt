@@ -6,34 +6,46 @@ import ru.geekbrains.myweather.repository.*
 
 class DetailsViewModel(
     private val liveData: MutableLiveData<DetailsState> = MutableLiveData(),
-    private val repository: DetailsRepositoryOne = DetailsRepositoryRetrofit2Impl(),
-            private val repositoryAdd: DetailsRepositoryAdd = DetailsRepositoryRoomImpl()
+    private val repositoryAdd: DetailsRepositoryAdd = DetailsRepositoryRoomImpl()
 ) : ViewModel() {
+
+    private var repositoryOne: DetailsRepositoryOne = DetailsRepositoryRetrofit2Impl()
+
 
     fun getLiveData() = liveData
 
     fun getWeather(city: City) {
         liveData.postValue(DetailsState.Loading)
-        repository.getWeatherDetails(city, object : Callback {
+        repositoryOne = if (isInternet()) {
+            DetailsRepositoryRetrofit2Impl()
+        } else {
+            DetailsRepositoryRoomImpl()
+        }
+        repositoryOne.getWeatherDetails(city, object : Callback {
             override fun onResponse(weather: Weather) {
                 liveData.postValue(DetailsState.Success(weather))
-                repositoryAdd.addWeather(weather)
+                if (isInternet()){
+                    repositoryAdd.addWeather(weather)
+                }
             }
 
             override fun onFail() {
-                liveData.postValue(DetailsState.Error(Throwable()))
+              liveData.postValue(DetailsState.Error(Throwable()))
             }
         })
+
+
     }
 
+    private fun isInternet(): Boolean {
+        //!!! заглушка
+        return false
+    }
 
     interface Callback {
         fun onResponse(weather: Weather)
-        fun onFail()
-    }
 
-    interface CallbackAll {
-        fun onResponse(listWeather: List <Weather>)
+        // TODO HW Fail
         fun onFail()
     }
 
