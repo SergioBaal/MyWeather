@@ -48,7 +48,7 @@ class HistoryWeatherListFragment : Fragment() {
             it.adapter = adapter
             it.layoutManager = LinearLayoutManager(requireContext())
         }
-        val observer = {data: WeatherListAppState -> renderData(data)}
+        val observer = { data: WeatherListAppState -> renderData(data) }
         viewModel.getData().observe(viewLifecycleOwner, observer)
         viewModel.getAll()
     }

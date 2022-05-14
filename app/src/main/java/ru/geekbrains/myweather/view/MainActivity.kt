@@ -16,7 +16,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.container, WeatherListFragment.newInstance()).addToBackStack("").commit()
+                .replace(R.id.container, WeatherListFragment.newInstance()).addToBackStack("")
+                .commit()
         }
 
     }
@@ -27,9 +28,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.action_history -> {
-                supportFragmentManager.beginTransaction().add(R.id.container, HistoryWeatherListFragment.newInstance()).addToBackStack("").commit()
+                supportFragmentManager.beginTransaction()
+                    .add(R.id.container, HistoryWeatherListFragment.newInstance())
+                    .addToBackStack("").commit()
             }
         }
         return super.onOptionsItemSelected(item)

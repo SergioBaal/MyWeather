@@ -7,16 +7,16 @@ import ru.geekbrains.myweather.viewmodel.DetailsViewModel
 import ru.geekbrains.myweather.viewmodel.HistoryViewModel
 
 
-class DetailsRepositoryRoomImpl:DetailsRepositoryOne,DetailsRepositoryAll,DetailsRepositoryAdd {
+class DetailsRepositoryRoomImpl : DetailsRepositoryOne, DetailsRepositoryAll, DetailsRepositoryAdd {
     override fun getAllWeatherDetails(callback: HistoryViewModel.CallbackForAll) {
         callback.onResponse(convertHistoryEntityToWeather(MyApp.getHistoryDao().getAll()))
     }
 
     override fun getWeatherDetails(city: City, callback: DetailsViewModel.Callback) {
-        val list =convertHistoryEntityToWeather(MyApp.getHistoryDao().getHistoryForCity(city.name))
-        if(list.isEmpty()){
+        val list = convertHistoryEntityToWeather(MyApp.getHistoryDao().getHistoryForCity(city.name))
+        if (list.isEmpty()) {
             callback.onFail() // то и отобразить нечего
-        }else{
+        } else {
             callback.onResponse(list.last()) //  hack
         }
 

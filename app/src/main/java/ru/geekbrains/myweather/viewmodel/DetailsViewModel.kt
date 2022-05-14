@@ -1,11 +1,6 @@
 package ru.geekbrains.myweather.viewmodel
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.os.Build
 import android.util.Log
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ru.geekbrains.myweather.repository.*
@@ -33,14 +28,14 @@ class DetailsViewModel(
         repositoryOne.getWeatherDetails(city, object : Callback {
             override fun onResponse(weather: Weather) {
                 liveData.postValue(DetailsState.Success(weather))
-                if (isInternet()){
+                if (isInternet()) {
                     repositoryAdd.addWeather(weather)
                 }
             }
 
             override fun onFail() {
-              liveData.postValue(DetailsState.Error(Throwable()))
-                Log.d("@@@", " ошибка в detailsViewModel 1" )
+                liveData.postValue(DetailsState.Error(Throwable()))
+                Log.d("@@@", " ошибка в detailsViewModel 1")
             }
         })
 
@@ -48,7 +43,7 @@ class DetailsViewModel(
     }
 
     fun isInternet(): Boolean {
-       return true
+        return true
     }
 
 
@@ -57,9 +52,9 @@ class DetailsViewModel(
 
 
         fun onFail() {
-            with (DetailsViewModel()) {
+            with(DetailsViewModel()) {
                 liveData.postValue(DetailsState.Error(Throwable()))
-                Log.d("@@@", " ошибка в detailsViewModel 2" )
+                Log.d("@@@", " ошибка в detailsViewModel 2")
             }
         }
     }

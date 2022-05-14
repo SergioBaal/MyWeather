@@ -4,7 +4,10 @@ import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import ru.geekbrains.myweather.BuildConfig
-import ru.geekbrains.myweather.utlis.*
+import ru.geekbrains.myweather.utlis.X_API_KEY
+import ru.geekbrains.myweather.utlis.YANDEX_DOMAIN
+import ru.geekbrains.myweather.utlis.YANDEX_PATH
+import ru.geekbrains.myweather.utlis.convertDtoToModel
 import ru.geekbrains.myweather.viewmodel.DetailsViewModel
 
 class DetailsRepositoryOkHttpImpl : DetailsRepositoryOne {

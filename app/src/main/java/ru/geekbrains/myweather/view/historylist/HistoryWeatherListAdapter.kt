@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
-import ru.geekbrains.myweather.repository.Weather
 import ru.geekbrains.myweather.databinding.FragmentHistoryWeatherListRecyclerItemBinding
+import ru.geekbrains.myweather.repository.Weather
 
 class HistoryWeatherListAdapter(
     private var data: List<Weather> = listOf()

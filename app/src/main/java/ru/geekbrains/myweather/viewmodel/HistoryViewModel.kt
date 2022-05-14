@@ -6,8 +6,6 @@ import androidx.lifecycle.ViewModel
 import ru.geekbrains.myweather.repository.DetailsRepositoryRoomImpl
 import ru.geekbrains.myweather.repository.Weather
 
-import java.lang.Thread.sleep
-
 class HistoryViewModel(
     private val liveData: MutableLiveData<WeatherListAppState> = MutableLiveData(),
     private val repository: DetailsRepositoryRoomImpl = DetailsRepositoryRoomImpl()
@@ -18,8 +16,8 @@ class HistoryViewModel(
         return liveData
     }
 
-    fun getAll(){
-        repository.getAllWeatherDetails(object : CallbackForAll{
+    fun getAll() {
+        repository.getAllWeatherDetails(object : CallbackForAll {
             override fun onResponse(listWeather: List<Weather>) {
                 liveData.postValue(WeatherListAppState.Success(listWeather))
             }

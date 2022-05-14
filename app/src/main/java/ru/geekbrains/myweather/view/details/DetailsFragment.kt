@@ -114,7 +114,7 @@ class DetailsFragment : Fragment() {
                     /*  Picasso.get()?.load("https://freepngimg.com/thumb/city/36275-3-city-hd.png")
                           ?.into(headerCityIcon) */
 
-                    headerCityIcon.load("https://freepngimg.com/thumb/city/36275-3-city-hd.png"){
+                    headerCityIcon.load("https://freepngimg.com/thumb/city/36275-3-city-hd.png") {
                         placeholder(R.drawable.ic_russia)
                         error(R.drawable.ic_earth)
                     }
