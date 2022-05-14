@@ -45,8 +45,12 @@ class DetailsViewModel(
     interface Callback {
         fun onResponse(weather: Weather)
 
-        // TODO HW Fail
-        fun onFail()
+
+        fun onFail() {
+            with (DetailsViewModel()) {
+                liveData.postValue(DetailsState.Error(Throwable()))
+            }
+        }
     }
 
 
