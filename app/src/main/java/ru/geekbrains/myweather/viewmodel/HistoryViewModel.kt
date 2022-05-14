@@ -25,7 +25,7 @@ class HistoryViewModel(
             }
 
             override fun onFail() {
-                TODO("Not yet implemented")
+                liveData.postValue(WeatherListAppState.Error(Throwable()))
             }
 
         })
@@ -33,7 +33,7 @@ class HistoryViewModel(
 
     interface CallbackForAll {
         fun onResponse(listWeather: List<Weather>)
-        // TODO HW Fail
+
         fun onFail()
     }
 
