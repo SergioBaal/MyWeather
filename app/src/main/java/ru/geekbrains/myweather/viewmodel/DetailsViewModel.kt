@@ -1,9 +1,15 @@
 package ru.geekbrains.myweather.viewmodel
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.util.Log
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ru.geekbrains.myweather.repository.*
+
 
 class DetailsViewModel(
     private val liveData: MutableLiveData<DetailsState> = MutableLiveData(),
@@ -16,6 +22,8 @@ class DetailsViewModel(
     fun getLiveData() = liveData
 
     fun getWeather(city: City) {
+
+
         liveData.postValue(DetailsState.Loading)
         repositoryOne = if (isInternet()) {
             DetailsRepositoryRetrofit2Impl()
@@ -39,10 +47,10 @@ class DetailsViewModel(
 
     }
 
-    private fun isInternet(): Boolean {
-        //!!! заглушка
-        return true
+    fun isInternet(): Boolean {
+       return true
     }
+
 
     interface Callback {
         fun onResponse(weather: Weather)

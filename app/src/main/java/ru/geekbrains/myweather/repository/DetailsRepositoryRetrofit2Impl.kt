@@ -7,12 +7,13 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.geekbrains.myweather.BuildConfig
+import ru.geekbrains.myweather.utlis.YANDEX_DOMAIN
 import ru.geekbrains.myweather.utlis.YANDEX_DOMAIN_HARD_MODE
 import ru.geekbrains.myweather.utlis.convertDtoToModel
 import ru.geekbrains.myweather.viewmodel.DetailsViewModel
 
 val weatherAPI = Retrofit.Builder().apply {
-    baseUrl(YANDEX_DOMAIN_HARD_MODE)
+    baseUrl(YANDEX_DOMAIN)
     addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
 }.build().create(WeatherAPI::class.java)
 
