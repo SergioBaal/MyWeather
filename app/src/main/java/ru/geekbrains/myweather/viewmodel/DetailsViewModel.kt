@@ -1,15 +1,21 @@
 package ru.geekbrains.myweather.viewmodel
 
+import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import ru.geekbrains.myweather.MyApp
 import ru.geekbrains.myweather.repository.*
+import ru.geekbrains.myweather.utlis.KEY_SP_IS_INTERNET
 
 
 class DetailsViewModel(
     private val liveData: MutableLiveData<DetailsState> = MutableLiveData(),
-    private val repositoryAdd: DetailsRepositoryAdd = DetailsRepositoryRoomImpl()
+    private val repositoryAdd: DetailsRepositoryAdd = DetailsRepositoryRoomImpl(),
 ) : ViewModel() {
+
+
 
     private var repositoryOne: DetailsRepositoryOne = DetailsRepositoryRetrofit2Impl()
 
@@ -43,7 +49,9 @@ class DetailsViewModel(
     }
 
     fun isInternet(): Boolean {
-        return true
+        val sp = MyApp.appContext!!.getSharedPreferences(KEY_SP_IS_INTERNET, Context.MODE_PRIVATE)
+        return sp.getBoolean(KEY_SP_IS_INTERNET, true)
+
     }
 
 

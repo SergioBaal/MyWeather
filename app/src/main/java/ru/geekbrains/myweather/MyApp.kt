@@ -13,7 +13,7 @@ class MyApp : Application() {
 
     companion object {
         private var db: MyWeatherDB? = null
-        private var appContext: MyApp? = null
+         var appContext: MyApp? = null
         fun getHistoryDao(): HistoryDao {
             if (db == null) {
                 if (appContext != null) {

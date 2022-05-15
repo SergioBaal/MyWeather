@@ -1,5 +1,8 @@
 package ru.geekbrains.myweather.view.details
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +19,7 @@ import ru.geekbrains.myweather.R
 import ru.geekbrains.myweather.databinding.FragmentDetailsBinding
 import ru.geekbrains.myweather.repository.Weather
 import ru.geekbrains.myweather.utlis.KEY_BUNDLE_WEATHER
+import ru.geekbrains.myweather.utlis.KEY_SP_IS_INTERNET
 import ru.geekbrains.myweather.viewmodel.DetailsState
 import ru.geekbrains.myweather.viewmodel.DetailsViewModel
 
@@ -50,6 +54,18 @@ class DetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        isNetworkAvailable(requireContext())
+        if (isNetworkAvailable(requireContext())) {
+            val sp = requireActivity().getSharedPreferences(KEY_SP_IS_INTERNET, Context.MODE_PRIVATE)
+            val editor = sp.edit()
+            editor.putBoolean(KEY_SP_IS_INTERNET, true)
+            editor.apply()
+        } else {
+            val sp = requireActivity().getSharedPreferences(KEY_SP_IS_INTERNET, Context.MODE_PRIVATE)
+            val editor = sp.edit()
+            editor.putBoolean(KEY_SP_IS_INTERNET, false)
+            editor.apply()
+        }
         viewModel.getLiveData().observe(
             viewLifecycleOwner
         ) { t -> renderData(t) }
@@ -192,6 +208,12 @@ class DetailsFragment : Fragment() {
     }
      */
 
+    fun isNetworkAvailable(context: Context): Boolean {
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        var activeNetworkInfo: NetworkInfo? = null
+        activeNetworkInfo = cm.activeNetworkInfo
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting
+    }
 
 }
 

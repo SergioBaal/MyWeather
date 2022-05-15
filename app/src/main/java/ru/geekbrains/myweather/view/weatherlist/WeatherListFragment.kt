@@ -1,6 +1,8 @@
 package ru.geekbrains.myweather.view.weatherlist
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +17,7 @@ import ru.geekbrains.myweather.R
 import ru.geekbrains.myweather.databinding.FragmentWeatherListBinding
 import ru.geekbrains.myweather.repository.Weather
 import ru.geekbrains.myweather.utlis.KEY_BUNDLE_WEATHER
+import ru.geekbrains.myweather.utlis.KEY_SP_IS_INTERNET
 import ru.geekbrains.myweather.utlis.KEY_SP_IS_RUSSIAN
 import ru.geekbrains.myweather.view.details.DetailsFragment
 import ru.geekbrains.myweather.viewmodel.MainViewModel
@@ -57,8 +60,6 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
         switchCities()
-
-
     }
 
 
@@ -160,6 +161,7 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
             })
         ).addToBackStack("").commit()
     }
+
 }
 
 private fun View.showSnackBar(
@@ -170,5 +172,7 @@ private fun View.showSnackBar(
 ) {
     Snackbar.make(this, text, length).setAction(actionText, action).show()
 }
+
+
 
 

@@ -14,6 +14,7 @@ const val KEY_WAVE_SERVICE_BROADCAST = "wave"
 const val KEY_BUNDLE_LAT = "lat"
 const val KEY_BUNDLE_LON = "lon"
 const val KEY_SP_IS_RUSSIAN = "isRussian"
+const val KEY_SP_IS_INTERNET = "INTERNET"
 
 
 class Utils {
