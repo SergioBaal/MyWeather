@@ -8,4 +8,9 @@
         android:icon="@android:drawable/ic_menu_recent_history"
         android:title="history"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/action_contacts"
+        android:icon="@android:drawable/stat_sys_phone_call_forward"
+        android:title="contacts"
+        app:showAsAction="always" />
 </menu>

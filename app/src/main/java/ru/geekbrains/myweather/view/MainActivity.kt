@@ -6,6 +6,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.gb.k_1919_2.view.weatherlist.HistoryWeatherListFragment
 import ru.geekbrains.myweather.R
+import ru.geekbrains.myweather.lesson9.WorkWithContentProviderFragment
 import ru.geekbrains.myweather.view.weatherlist.WeatherListFragment
 
 class MainActivity : AppCompatActivity() {
@@ -33,6 +34,10 @@ class MainActivity : AppCompatActivity() {
                 supportFragmentManager.beginTransaction()
                     .add(R.id.container, HistoryWeatherListFragment.newInstance())
                     .addToBackStack("").commit()
+            }
+            R.id.action_contacts->{
+                supportFragmentManager.beginTransaction()
+                    .add(R.id.container, WorkWithContentProviderFragment.newInstance()).addToBackStack("").commit()
             }
         }
         return super.onOptionsItemSelected(item)
