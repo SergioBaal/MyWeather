@@ -11,11 +11,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import ru.geekbrains.myweather.databinding.FragmentWorkWithContentProviderBinding
+import ru.geekbrains.myweather.utlis.REQUEST_CODE
 
 class WorkWithContentProviderFragment : Fragment() {
 
@@ -44,39 +45,22 @@ class WorkWithContentProviderFragment : Fragment() {
     }
 
     private fun checkPermission() {
-        // а есть ли разрешение?
-        if (ContextCompat.checkSelfPermission(
+        when {
+            ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.READ_CONTACTS
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            getContacts()
-            getPhones()
-        } else if (shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS)) {
-            // важно написать убедительную просьбу
-            explain()
-        } else {
-            mRequestPermission()
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                getContacts()
+            }
+            shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS) -> {
+                explainForContacts()
+            }
+            else -> {
+                mRequestContactPermission()
+            }
         }
     }
 
-    private fun explain() {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Доступ к контактам")
-            .setMessage("Объяснение бла бла бла бла")
-            .setPositiveButton("Предоставить доступ") { _, _ ->
-                mRequestPermission()
-            }
-            .setNegativeButton("Не надо") { dialog, _ -> dialog.dismiss() }
-            .create()
-            .show()
-    }
-
-    val REQUEST_CODE = 999
-    val MY_PERMISSIONS_REQUEST_CALL_PHONE = 1
-    private fun mRequestPermission() {
-        requestPermissions(arrayOf(Manifest.permission.READ_CONTACTS), REQUEST_CODE)
-    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -86,11 +70,14 @@ class WorkWithContentProviderFragment : Fragment() {
         if (requestCode == REQUEST_CODE) {
 
             for (i in permissions.indices) {
+                if (permissions[i] == Manifest.permission.CALL_PHONE && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                    makeCall()
+                }
                 if (permissions[i] == Manifest.permission.READ_CONTACTS && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                     getContacts()
-                    getPhones()
+
                 } else {
-                    explain()
+                    explainForContacts()
                 }
             }
         } else {
@@ -120,51 +107,95 @@ class WorkWithContentProviderFragment : Fragment() {
                     })
                 }
             }
-        }
-    }
+        } //вызываем имена контактов
 
-    private fun getPhones() {
-        val contentResolver: ContentResolver = requireContext().contentResolver
-
-        val cursor = contentResolver.query(
+        val cursorForPhone = contentResolver.query(
             ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
             null,
             null,
             null,
             ContactsContract.CommonDataKinds.Phone.NUMBER + " ASC"
         ) // или DESC
-        cursor?.let {
+        cursorForPhone?.let {
             for (i in 0 until it.count) {
-                if (cursor.moveToPosition(i)) {
+                if (cursorForPhone.moveToPosition(i)) {
                     val columnNameIndex =
-                        cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
-                    val phone = cursor.getString(columnNameIndex)
+                        cursorForPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                    phone = cursorForPhone.getString(columnNameIndex)
                     binding.containerForPhones.addView(TextView(requireContext()).apply {
                         textSize = 30f
                         text = phone.toString()
                         setOnClickListener {
-                            val intent =
-                                Intent(Intent.ACTION_CALL, Uri.fromParts("tel", phone, null))
-                            if (ContextCompat.checkSelfPermission(
-                                    requireContext(),
-                                    Manifest.permission.CALL_PHONE
-                                ) != PackageManager.PERMISSION_GRANTED
-                            ) {
-                                ActivityCompat.requestPermissions(
-                                    requireActivity(),
-                                    arrayOf(Manifest.permission.CALL_PHONE), MY_PERMISSIONS_REQUEST_CALL_PHONE
-                                )
-                            } else {
-                                startActivity(intent)
-                            }
-
-
+                            makeCall()
                         }
                     })
                 }
             }
-        }
+        }  //вызываем телефоны контактов
     }
+
+
+
+    private val launcherReadContacts =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
+            if (result) {
+                getContacts()
+            } else {
+                explainForContacts()
+            }
+        }
+
+    private fun mRequestContactPermission() {
+        // requestPermissions(arrayOf(Manifest.permission.READ_CONTACTS), REQUEST_CODE)
+        launcherReadContacts.launch(Manifest.permission.READ_CONTACTS)
+    }
+
+
+
+
+    private var phone: String? = null
+    private val launcherMakeCall = registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
+            phone?.let {
+                if (result) {
+                    val intent =
+                        Intent(Intent.ACTION_CALL, Uri.fromParts("tel", it, null))
+                    startActivity(intent)
+                } else {
+                    explainForCall()
+                }
+            }
+    }
+
+    private fun makeCall() {
+        phone?.let{
+            launcherMakeCall.launch(Manifest.permission.CALL_PHONE)
+            }
+        }
+
+    private fun explainForContacts() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Доступ к контактам")
+            .setMessage("Объяснение бла бла бла бла")
+            .setPositiveButton("Предоставить доступ") { _, _ ->
+                mRequestContactPermission()
+            }
+            .setNegativeButton("Не надо") { dialog, _ -> dialog.dismiss() }
+            .create()
+            .show()
+    }
+
+    private fun explainForCall() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Доступ к звонки")
+            .setMessage("Объяснение бла бла бла бла")
+            .setPositiveButton("Предоставить доступ") { _, _ ->
+                makeCall()
+            }
+            .setNegativeButton("Не надо") { dialog, _ -> dialog.dismiss() }
+            .create()
+            .show()
+    }
+
 
 
     companion object {

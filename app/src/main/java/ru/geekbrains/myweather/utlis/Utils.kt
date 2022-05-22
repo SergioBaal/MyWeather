@@ -3,6 +3,7 @@ package ru.geekbrains.myweather.utlis
 import ru.geekbrains.myweather.domain.room.HistoryEntity
 import ru.geekbrains.myweather.repository.*
 
+const val REQUEST_CODE = 999
 const val YANDEX_DOMAIN = "https://api.weather.yandex.ru/"
 const val YANDEX_DOMAIN_HARD_MODE = "http://212.86.114.27/"
 const val YANDEX_PATH = "v2/informers?"
