@@ -36,15 +36,17 @@ class HistoryWeatherListFragment : Fragment() {
         return binding.root
     }
 
-    var isRussian = true
     private val viewModel: HistoryViewModel by lazy {
         ViewModelProvider(this).get(HistoryViewModel::class.java)
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.recyclerView.also {// TODO HW вынесты в initRecycler()
+        initRecycler()
+    }
+
+    private fun initRecycler() {
+        binding.recyclerView.also {
             it.adapter = adapter
             it.layoutManager = LinearLayoutManager(requireContext())
         }
@@ -57,15 +59,12 @@ class HistoryWeatherListFragment : Fragment() {
     private fun renderData(data: WeatherListAppState) {
         when (data) {
             is WeatherListAppState.Error -> {
-                //binding.loadingLayout.visibility = View.GONE
                 Snackbar.make(binding.root, "Не получилось ${data.error}", Snackbar.LENGTH_LONG)
                     .show()
             }
             is WeatherListAppState.Loading -> {
-                //binding.loadingLayout.visibility = View.VISIBLE
             }
             is WeatherListAppState.Success -> {
-                //binding.loadingLayout.visibility = View.GONE
                 adapter.setData(data.weatherList)
             }
         }

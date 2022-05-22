@@ -31,16 +31,36 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_history -> {
-                supportFragmentManager.beginTransaction()
-                    .add(R.id.container, HistoryWeatherListFragment.newInstance())
-                    .addToBackStack("").commit()
+                val fragmentHistory = supportFragmentManager.findFragmentByTag("tag")
+                if (fragmentHistory == null) {
+                    supportFragmentManager.apply {
+                        beginTransaction()
+                            .replace(
+                                R.id.container,
+                                HistoryWeatherListFragment.newInstance(),
+                                "tag"
+                            )
+                            .addToBackStack("")
+                            .commit() //FIXME
+                    }
+                }
             }
-            R.id.action_contacts->{
-                supportFragmentManager.beginTransaction()
-                    .add(R.id.container, WorkWithContentProviderFragment.newInstance()).addToBackStack("").commit()
+            R.id.action_contacts -> {
+                val fragmentContacts = supportFragmentManager.findFragmentByTag("contacts")
+                if (fragmentContacts == null) {
+                    supportFragmentManager.apply {
+                        beginTransaction()
+                            .replace(
+                                R.id.container,
+                                WorkWithContentProviderFragment.newInstance(),
+                                "contacts"
+                            )
+                            .addToBackStack("")
+                            .commit()
+                    }
+                }
             }
         }
         return super.onOptionsItemSelected(item)
     }
-
 }
