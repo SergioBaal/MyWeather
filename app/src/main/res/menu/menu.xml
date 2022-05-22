@@ -13,4 +13,9 @@
         android:icon="@android:drawable/stat_sys_phone_call_forward"
         android:title="contacts"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/action_menu_google_maps"
+        android:icon="@android:drawable/ic_menu_mapmode"
+        android:title="google_maps"
+        app:showAsAction="always" />
 </menu>

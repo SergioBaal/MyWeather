@@ -6,6 +6,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.gb.k_1919_2.view.weatherlist.HistoryWeatherListFragment
 import ru.geekbrains.myweather.R
+import ru.geekbrains.myweather.lesson10.MapsFragment
 import ru.geekbrains.myweather.lesson9.WorkWithContentProviderFragment
 import ru.geekbrains.myweather.view.weatherlist.WeatherListFragment
 
@@ -59,6 +60,10 @@ class MainActivity : AppCompatActivity() {
                             .commit()
                     }
                 }
+            }
+            R.id.action_menu_google_maps->{
+                supportFragmentManager.beginTransaction()
+                    .add(R.id.container, MapsFragment()).addToBackStack("").commit()
             }
         }
         return super.onOptionsItemSelected(item)
