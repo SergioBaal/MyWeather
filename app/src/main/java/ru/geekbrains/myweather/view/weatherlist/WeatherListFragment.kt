@@ -8,8 +8,6 @@ import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,7 +16,6 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -28,11 +25,8 @@ import ru.geekbrains.myweather.databinding.FragmentWeatherListBinding
 import ru.geekbrains.myweather.repository.City
 import ru.geekbrains.myweather.repository.Weather
 import ru.geekbrains.myweather.utlis.KEY_BUNDLE_WEATHER
-import ru.geekbrains.myweather.utlis.KEY_SP_IS_INTERNET
 import ru.geekbrains.myweather.utlis.KEY_SP_IS_RUSSIAN
-import ru.geekbrains.myweather.utlis.REQUEST_CODE
 import ru.geekbrains.myweather.view.details.DetailsFragment
-import ru.geekbrains.myweather.viewmodel.DetailsState
 import ru.geekbrains.myweather.viewmodel.MainViewModel
 import ru.geekbrains.myweather.viewmodel.WeatherListAppState
 import java.util.*
@@ -189,7 +183,7 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             getLocation()
-        } else if (shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS)) {
+        } else if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
             // важно написать убедительную просьбу
             explain()
         } else {
@@ -209,7 +203,7 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
             .show()
     }
 
-    private val REQUEST_CODE = 998
+    private val REQUEST_CODE = 997
     private fun mRequestPermission() {
         requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_CODE)
     }
@@ -235,7 +229,6 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
 
     fun getAddressByLocation(location: Location) {
         val geocoder = Geocoder(requireContext(), Locale.getDefault())
-        val timeStump = System.currentTimeMillis()
         Thread {
             val addressText = geocoder.getFromLocation(
                 location.latitude,
@@ -246,18 +239,18 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
                 showAddressDialog(addressText, location)
             }
         }.start()
-        Log.d("@@@", " прошло ${System.currentTimeMillis() - timeStump}")
     }
 
 
     private val locationListenerDistance = object : LocationListener {
         override fun onLocationChanged(location: Location) {
-            Log.d("@@@",location.toString())
             getAddressByLocation(location)
         }
+
         override fun onProviderDisabled(provider: String) {
             super.onProviderDisabled(provider)
         }
+
         override fun onProviderEnabled(provider: String) {
             super.onProviderEnabled(provider)
         }
@@ -265,13 +258,14 @@ class WeatherListFragment : Fragment(), OnItemListClickListener {
     }
 
     @SuppressLint("MissingPermission")
-    private fun getLocation(){
+    private fun getLocation() {
         context?.let {
             val locationManager = it.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                val providerGPS = locationManager.getProvider(LocationManager.GPS_PROVIDER) // можно использовать BestProvider
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                val providerGPS =
+                    locationManager.getProvider(LocationManager.GPS_PROVIDER) // можно использовать BestProvider
 
-                providerGPS?.let{
+                providerGPS?.let {
                     locationManager.requestLocationUpdates(
                         LocationManager.GPS_PROVIDER,
                         0,
@@ -315,8 +309,6 @@ private fun View.showSnackBar(
 ) {
     Snackbar.make(this, text, length).setAction(actionText, action).show()
 }
-
-
 
 
 

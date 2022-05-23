@@ -1,6 +1,5 @@
 package ru.geekbrains.myweather.viewmodel
 
-import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -14,7 +13,6 @@ class DetailsViewModel(
     private val liveData: MutableLiveData<DetailsState> = MutableLiveData(),
     private val repositoryAdd: DetailsRepositoryAdd = DetailsRepositoryRoomImpl(),
 ) : ViewModel() {
-
 
 
     private var repositoryOne: DetailsRepositoryOne = DetailsRepositoryRetrofit2Impl()

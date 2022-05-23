@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-            R.id.action_menu_google_maps->{
+            R.id.action_menu_google_maps -> {
                 supportFragmentManager.beginTransaction()
                     .add(R.id.container, MapsFragment()).addToBackStack("").commit()
             }

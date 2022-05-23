@@ -56,12 +56,14 @@ class DetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         isNetworkAvailable(requireContext())
         if (isNetworkAvailable(requireContext())) {
-            val sp = requireActivity().getSharedPreferences(KEY_SP_IS_INTERNET, Context.MODE_PRIVATE)
+            val sp =
+                requireActivity().getSharedPreferences(KEY_SP_IS_INTERNET, Context.MODE_PRIVATE)
             val editor = sp.edit()
             editor.putBoolean(KEY_SP_IS_INTERNET, true)
             editor.apply()
         } else {
-            val sp = requireActivity().getSharedPreferences(KEY_SP_IS_INTERNET, Context.MODE_PRIVATE)
+            val sp =
+                requireActivity().getSharedPreferences(KEY_SP_IS_INTERNET, Context.MODE_PRIVATE)
             val editor = sp.edit()
             editor.putBoolean(KEY_SP_IS_INTERNET, false)
             editor.apply()

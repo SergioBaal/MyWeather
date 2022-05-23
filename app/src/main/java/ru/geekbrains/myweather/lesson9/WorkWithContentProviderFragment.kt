@@ -135,7 +135,6 @@ class WorkWithContentProviderFragment : Fragment() {
     }
 
 
-
     private val launcherReadContacts =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
             if (result) {
@@ -151,10 +150,9 @@ class WorkWithContentProviderFragment : Fragment() {
     }
 
 
-
-
     private var phone: String? = null
-    private val launcherMakeCall = registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
+    private val launcherMakeCall =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
             phone?.let {
                 if (result) {
                     val intent =
@@ -164,13 +162,13 @@ class WorkWithContentProviderFragment : Fragment() {
                     explainForCall()
                 }
             }
-    }
+        }
 
     private fun makeCall() {
-        phone?.let{
+        phone?.let {
             launcherMakeCall.launch(Manifest.permission.CALL_PHONE)
-            }
         }
+    }
 
     private fun explainForContacts() {
         AlertDialog.Builder(requireContext())
@@ -195,7 +193,6 @@ class WorkWithContentProviderFragment : Fragment() {
             .create()
             .show()
     }
-
 
 
     companion object {
